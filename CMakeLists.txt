@@ -13,7 +13,9 @@ add_library(${PROJECT_NAME} SHARED
 
 add_executable(${PROJECT_NAME}_test "main.cpp")
 
-set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_test PROPERTIES
+add_executable(${PROJECT_NAME}_input "test_input.cpp")
+
+set_target_properties(${PROJECT_NAME} ${PROJECT_NAME}_test ${PROJECT_NAME}_input PROPERTIES
   LINKER_LANGUAGE CXX
   CXX_STANDARD 14
   CXX_STANDARD_REQUIRED ON
@@ -27,7 +29,11 @@ target_link_libraries(${PROJECT_NAME}_test
         ${PROJECT_NAME}
 )
 
-set_target_properties(${PROJECT_NAME}_test  PROPERTIES
+target_link_libraries(${PROJECT_NAME}_input
+        ${PROJECT_NAME}
+)
+
+set_target_properties(${PROJECT_NAME}_test  ${PROJECT_NAME}_input PROPERTIES
     COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
     INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
 )

@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <map>
 
+namespace {
+
 struct FractionsData {
     int a = 0;
     int b = 0;
@@ -69,6 +71,20 @@ int gcd(int x, int y)
     return gcd(x, (y - x) / 2);
 }
 
+void walk(int x, int y, int ocean[][100], int n)
+{
+    if(x < 0 || x > n) return;
+    if(y < 0 || y > n) return;
+    if(ocean[x][y] == 0) return;
+
+    ocean[x][y] = 0;
+
+    walk(x - 1, y, ocean, n);
+    walk(x + 1, y, ocean, n);
+    walk(x, y - 1, ocean, n);
+    walk(x, y + 1, ocean, n);
+}
+}
 std::pair<int, int> tasks::oneDivTwoPeas(std::string &input)
 {
     auto data = parseData(input);
@@ -88,4 +104,97 @@ int tasks::furTreeGarlandValue(int tree[][100], int height)
         for(int j = 0; j <= i; j++)
             tree[i][j] += std::max(tree[i + 1][j], tree[i + 1][j + 1]);
     return tree[0][0];
+}
+
+int tasks::fiveOnEight(int n)
+{
+    int x5 = 1;
+    int x8 = 1;
+    int x55 = 0;
+    int x88 = 0;
+
+    int f5 = 0;
+    int f8 = 0;
+
+    for(int i = 2; i <= n; i++)
+    {
+        f5 = x8 + x88;
+        f8 = x5 + x55;
+        x55 = x5;
+        x88 = x8;
+
+        x5 = f5;
+        x8 = f8;
+    }
+    return x5 + x55 + x8 + x88;
+}
+
+int tasks::islandsInMatrix(int ocean[][100], int n)
+{
+    int islands = 0;
+    for(int i = 0; i < n; i++)
+        for(int j = 0; j < n; j++)
+            if(ocean[i][j])
+            {
+                islands++;
+                walk(i, j, ocean, n);
+            }
+    return islands;
+}
+
+int tasks::SmallBarn::findLeftLength(int i, int j)
+{
+    int counter = 0;
+    while(j < m_N)
+    {
+        if(m_field[i][j] == 1)
+            break;
+        counter++;
+        j++;
+    }
+    return counter;
+}
+
+void tasks::SmallBarn::findMaxSquare(int i, int j)
+{
+    int lengthM = 1;
+    int limitLength = findLeftLength(i, j);
+    int maxSquare = limitLength;
+    
+    for(int m = i + 1; m < m_M; m++)
+    {
+        lengthM++;
+        int lengthN = findLeftLength(m, j);
+        if(lengthN < limitLength)
+            limitLength = lengthN;
+        else if(lengthN > limitLength)
+            lengthN = limitLength;
+        if(maxSquare < lengthN * lengthM)
+            maxSquare = lengthN * lengthM;
+    }
+    if(m_maxSquare < maxSquare)
+        m_maxSquare = maxSquare;
+}
+
+
+void tasks::SmallBarn::readField()
+{
+    for(int i = 0; i < m_M; i++)
+        for(int j = 0; j < m_N; j++)
+            std::cin >> m_field[i][j];
+}
+
+void tasks::SmallBarn::fillField(int field[][30])
+{
+    for(int i = 0; i < m_M; i++)
+        for(int j = 0; j < m_N; j++)
+            m_field[i][j] = field[i][j];
+}
+
+int tasks::SmallBarn::calc()
+{    
+    for(int i = 0; i < m_M; i++)
+        for(int j = 0; j < m_N; j++)
+            findMaxSquare(i, j);
+    return m_maxSquare;
 }
