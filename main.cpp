@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(barn_finder_part_two_tests)
     int answerR[10] = {9, 9, 9, 4, 4, 9, 7, 7, 9, 9};
 
     tasks::BarnFinder barnFinder(N, M);
-    barnFinder.fillBuff(buff, N);
+    barnFinder.fillBuff(buff);
     barnFinder.calcLRBuffs();
     barnFinder.printLRBuffs();
 
@@ -153,5 +153,11 @@ BOOST_AUTO_TEST_CASE(barn_finder_part_two_tests)
         BOOST_CHECK_MESSAGE(lBuffer[i] == answerL[i], "wrong value in lBuffer. Index is " << i << ". Real value is " << answerL[i]);
         BOOST_CHECK_MESSAGE(rBuffer[i] == answerR[i], "wrong value in lBuffer. Index is " << i << ". Real value is " << answerL[i]);
     }
+
+    int buff2[10] = {6, 5, 4, 3, 2, 1, 0, 1, 2, 3};
+    barnFinder.fillBuff(buff2);
+    barnFinder.calcLRBuffs();
+    barnFinder.printLRBuffs();
+
 }
 BOOST_AUTO_TEST_SUITE_END()

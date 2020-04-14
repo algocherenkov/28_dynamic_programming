@@ -241,15 +241,13 @@ void BarnFinder::getMatrixLengthsAboveCells(int field[][30])
 
 void BarnFinder::readBuff()
 {
-    int length = 0;
-    std::cin >> length;
-    for(int i = 0; i < length; i++)
+    for(int i = 0; i < m_N; i++)
         std::cin >> m_buffLine[i];
 }
 
-void BarnFinder::fillBuff(int line[], int length)
+void BarnFinder::fillBuff(int line[])
 {
-    for(int i = 0; i < length; i++)
+    for(int i = 0; i < m_N; i++)
         m_buffLine[i] = line[i];
 }
 
@@ -263,7 +261,7 @@ void BarnFinder::calcLRBuffs()
             m_buffL[i] = i;
         else if(i > 0 && m_buffLine[i] <= m_buffLine[i - 1])
             store.push(i);
-        else if(!store.empty())
+        else
         {
             store.push(i);
             int border = store.top();
@@ -292,7 +290,7 @@ void BarnFinder::calcLRBuffs()
             m_buffR[i] = i;
         else if(i < (m_N - 1) && m_buffLine[i] <= m_buffLine[i + 1])
             store.push(i);
-        else if(!store.empty())
+        else
         {
             store.push(i);
             int border = store.top();
@@ -328,7 +326,7 @@ void BarnFinder::printLRBuffs()
     {
         std::cout << m_buffR[i] << " ";
     }
-    std::cout << m_buffR[m_N - 1];
+    std::cout << m_buffR[m_N - 1] << std::endl;
 }
 
 void BarnFinder::findMaxSquareAboveCell(int i)

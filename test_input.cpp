@@ -6,11 +6,11 @@ int main()
     int N = 0;
     int M = 0;
     std::cin >> N;
-    std::cin >> M;
-    tasks::BarnFinder barnFinder(N, M);
-    barnFinder.readTreeCoords();
-    barnFinder.calcMatrixLengthsAboveCells();
 
-    barnFinder.printMatrixLengthsAboveCells();
+    tasks::BarnFinder barnFinder(N, M);
+    barnFinder.readBuff();
+    barnFinder.calcLRBuffs();
+
+    barnFinder.printLRBuffs();
     getchar();
 }

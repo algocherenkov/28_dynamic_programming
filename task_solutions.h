@@ -77,7 +77,7 @@ namespace tasks {
 
         //2nd part of bran task
         void readBuff();
-        void fillBuff(int line[30], int length);
+        void fillBuff(int line[30]);
         void calcLRBuffs();
         void printLRBuffs();
         int* getLBuff() { return m_buffL; }
