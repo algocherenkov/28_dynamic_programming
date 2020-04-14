@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <map>
 #include <cstring>
+#include <stack>
 namespace tasks {
 
 /*******************************************ONETWOPEAS*********************************************/
@@ -236,6 +237,98 @@ void BarnFinder::getMatrixLengthsAboveCells(int field[][30])
     for(int i = 0; i < m_M; i++)
         for(int j = 0; j < m_N; j++)
             field[i][j] = m_matrixLengthsAboveCells[i][j];
+}
+
+void BarnFinder::readBuff()
+{
+    int length = 0;
+    std::cin >> length;
+    for(int i = 0; i < length; i++)
+        std::cin >> m_buffLine[i];
+}
+
+void BarnFinder::fillBuff(int line[], int length)
+{
+    for(int i = 0; i < length; i++)
+        m_buffLine[i] = line[i];
+}
+
+void BarnFinder::calcLRBuffs()
+{
+    std::stack<int> store;
+
+    for(int i = m_N - 1; i >= 0; i--)
+    {
+        if(!m_buffLine[i])
+            m_buffL[i] = i;
+        else if(i > 0 && m_buffLine[i] <= m_buffLine[i - 1])
+            store.push(i);
+        else if(!store.empty())
+        {
+            store.push(i);
+            int border = store.top();
+            if(i > 0)
+                for(int k = i; m_buffLine[k] > m_buffLine[i - 1]; k++)
+                {
+                    if(m_buffL[k])
+                        continue;
+                    m_buffL[k] = border;
+                    store.pop();
+                }
+            else if(!store.empty())
+            {
+                while(!store.empty())
+                {
+                    m_buffL[store.top()] = border;
+                    store.pop();
+                }
+            }
+        }
+    }
+
+    for(int i = 0; i < m_N; i++)
+    {
+        if(!m_buffLine[i])
+            m_buffR[i] = i;
+        else if(i < (m_N - 1) && m_buffLine[i] <= m_buffLine[i + 1])
+            store.push(i);
+        else if(!store.empty())
+        {
+            store.push(i);
+            int border = store.top();
+            if(i < (m_N - 1))
+                for(int k = i; m_buffLine[k] > m_buffLine[i + 1]; k--)
+                {
+                    if(m_buffR[k])
+                        continue;
+                    m_buffR[k] = border;
+                    store.pop();
+                }
+            else if(!store.empty())
+            {
+                while(!store.empty())
+                {
+                    m_buffR[store.top()] = border;
+                    store.pop();
+                }
+            }
+        }
+    }
+}
+
+void BarnFinder::printLRBuffs()
+{
+    for(int i = 0; i < m_N - 1; i++)
+    {
+        std::cout << m_buffL[i] << " ";
+    }
+    std::cout << m_buffL[m_N - 1] << std::endl;
+
+    for(int i = 0; i < m_N - 1; i++)
+    {
+        std::cout << m_buffR[i] << " ";
+    }
+    std::cout << m_buffR[m_N - 1];
 }
 
 void BarnFinder::findMaxSquareAboveCell(int i)

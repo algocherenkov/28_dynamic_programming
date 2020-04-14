@@ -75,6 +75,14 @@ namespace tasks {
         void printMatrixLengthsAboveCells();
         void getMatrixLengthsAboveCells(int field[30][30]);
 
+        //2nd part of bran task
+        void readBuff();
+        void fillBuff(int line[30], int length);
+        void calcLRBuffs();
+        void printLRBuffs();
+        int* getLBuff() { return m_buffL; }
+        int* getRBuff() { return m_buffR; }
+
     private:
         int findLeftLength(int i, int j);
         void findMaxSquare(int i, int j);
@@ -82,10 +90,15 @@ namespace tasks {
     private:
         int m_M{0};
         int m_N{0};
+
         int m_field[1000][1000];
+        int m_maxSquare{0};
 
         std::unordered_set<std::pair<int, int>, pair_hash> m_treeCoords;
         int m_matrixLengthsAboveCells[1000][1000]{{0}};
-        int m_maxSquare{0};
+
+        int m_buffLine[1000]{0};
+        int m_buffL[1000]{0};
+        int m_buffR[1000]{0};
     };    
 }
