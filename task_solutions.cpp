@@ -3,61 +3,52 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
+#include <cstring>
+namespace tasks {
 
-namespace {
-
-struct FractionsData {
-    int a = 0;
-    int b = 0;
-    int c = 0;
-    int d = 0;
-};
-
-FractionsData parseData(std::string &input)
+/*******************************************ONETWOPEAS*********************************************/
+OneTwoPeas::FractionsData tasks::OneTwoPeas::parseData()
 {
-    input.erase(std::remove(input.begin(), input.end(), ' '), input.end());
+    m_data.erase(std::remove(m_data.begin(), m_data.end(), ' '), m_data.end());
     FractionsData result;
 
-    auto divPos = input.find_first_of('/');
+    auto divPos = m_data.find_first_of('/');
     if(divPos == std::string::npos)
     {
         std::cerr << "wrong input. No 'division' sign" << std::endl;
         return FractionsData{-1, -1, -1, -1};
     }
 
-    auto a_str = input.substr(0, divPos);
+    auto a_str = m_data.substr(0, divPos);
     result.a = atoi(a_str.c_str());
 
-    auto signPos = input.find_first_of("+-", divPos);
+    auto signPos = m_data.find_first_of("+-", divPos);
     if(signPos == std::string::npos)
     {
         std::cerr << "wrong input.No 'operator' sign" << std::endl;
         return FractionsData{-1, -1, -1, -1};
     }
 
-    auto b_str = input.substr(divPos + 1, signPos - divPos - 1);
+    auto b_str = m_data.substr(divPos + 1, signPos - divPos - 1);
     result.b = atoi(b_str.c_str());
 
-    auto divPos2 = input.find_first_of('/', signPos);
+    auto divPos2 = m_data.find_first_of('/', signPos);
     if(divPos2 == std::string::npos)
     {
         std::cerr << "wrong input. No 'division' sign" << std::endl;
         return FractionsData{-1, -1, -1, -1};
     }
 
-    auto c_str = input.substr(signPos, divPos2);
+    auto c_str = m_data.substr(signPos, divPos2);
     result.c = atoi(c_str.c_str());
 
-    auto d_str = input.substr(divPos2 + 1);
+    auto d_str = m_data.substr(divPos2 + 1);
     result.d = atoi(d_str.c_str());
 
     return result;
 }
 
-bool even(int x) { return (x & 1) == 0; }
-bool odd(int x) { return (x & 1) == 1; }
-
-int gcd(int x, int y)
+int OneTwoPeas::gcd(int x, int y)
 {
     if(x == y) return x;
     if(x == 0) return y;
@@ -71,23 +62,9 @@ int gcd(int x, int y)
     return gcd(x, (y - x) / 2);
 }
 
-void walk(int x, int y, int ocean[][100], int n)
+std::pair<int, int> OneTwoPeas::calc()
 {
-    if(x < 0 || x > n) return;
-    if(y < 0 || y > n) return;
-    if(ocean[x][y] == 0) return;
-
-    ocean[x][y] = 0;
-
-    walk(x - 1, y, ocean, n);
-    walk(x + 1, y, ocean, n);
-    walk(x, y - 1, ocean, n);
-    walk(x, y + 1, ocean, n);
-}
-}
-std::pair<int, int> tasks::oneDivTwoPeas(std::string &input)
-{
-    auto data = parseData(input);
+    auto data = parseData();
     int x = data.a * data.d + data.b * data.c;
     int y = data.b * data.d;
 
@@ -98,7 +75,8 @@ std::pair<int, int> tasks::oneDivTwoPeas(std::string &input)
     return std::pair<int,int>(x,y);
 }
 
-int tasks::furTreeGarlandValue(int tree[][100], int height)
+/*******************************************FURTREEGARLAND*********************************************/
+int furTreeGarlandValue(int tree[][100], int height)
 {
     for(int i = height - 2; i >= 0 ; i--)
         for(int j = 0; j <= i; j++)
@@ -106,7 +84,8 @@ int tasks::furTreeGarlandValue(int tree[][100], int height)
     return tree[0][0];
 }
 
-int tasks::fiveOnEight(int n)
+/*******************************************FIVEONEIGHT*********************************************/
+int fiveOnEight(int n)
 {
     int x5 = 1;
     int x8 = 1;
@@ -129,7 +108,22 @@ int tasks::fiveOnEight(int n)
     return x5 + x55 + x8 + x88;
 }
 
-int tasks::islandsInMatrix(int ocean[][100], int n)
+/*******************************************ISLANDSINMATRIX*********************************************/
+void walk(int x, int y, int ocean[][100], int n)
+{
+    if(x < 0 || x > n) return;
+    if(y < 0 || y > n) return;
+    if(ocean[x][y] == 0) return;
+
+    ocean[x][y] = 0;
+
+    walk(x - 1, y, ocean, n);
+    walk(x + 1, y, ocean, n);
+    walk(x, y - 1, ocean, n);
+    walk(x, y + 1, ocean, n);
+}
+
+int islandsInMatrix(int ocean[][100], int n)
 {
     int islands = 0;
     for(int i = 0; i < n; i++)
@@ -142,7 +136,8 @@ int tasks::islandsInMatrix(int ocean[][100], int n)
     return islands;
 }
 
-int tasks::SmallBarn::findLeftLength(int i, int j)
+/*******************************************SMALLBARN*********************************************/
+int BarnFinder::findLeftLength(int i, int j)
 {
     int counter = 0;
     while(j < m_N)
@@ -155,7 +150,7 @@ int tasks::SmallBarn::findLeftLength(int i, int j)
     return counter;
 }
 
-void tasks::SmallBarn::findMaxSquare(int i, int j)
+void BarnFinder::findMaxSquare(int i, int j)
 {
     int lengthM = 1;
     int limitLength = findLeftLength(i, j);
@@ -177,24 +172,82 @@ void tasks::SmallBarn::findMaxSquare(int i, int j)
 }
 
 
-void tasks::SmallBarn::readField()
+void BarnFinder::readField()
 {
     for(int i = 0; i < m_M; i++)
         for(int j = 0; j < m_N; j++)
             std::cin >> m_field[i][j];
 }
 
-void tasks::SmallBarn::fillField(int field[][30])
+void BarnFinder::fillField(int field[][30])
 {
     for(int i = 0; i < m_M; i++)
         for(int j = 0; j < m_N; j++)
             m_field[i][j] = field[i][j];
 }
 
-int tasks::SmallBarn::calc()
+int BarnFinder::calcWithBruteForce()
 {    
     for(int i = 0; i < m_M; i++)
         for(int j = 0; j < m_N; j++)
             findMaxSquare(i, j);
     return m_maxSquare;
+}
+
+void BarnFinder::readTreeCoords()
+{
+    int x = 0;
+    int y = 0;
+    int t = 0;
+    std::cin >> t;
+    for(int i = 0; i < t; i++)
+    {
+        std::cin >> x;
+        std::cin >> y;
+
+        m_treeCoords.emplace(x, y);
+    }
+}
+
+void BarnFinder::fillTreeCoords(int coords[2][30], int t)
+{
+    for(int i = 0; i < t; i++)
+        m_treeCoords.emplace(coords[i][0], coords[i][1]);
+}
+
+void BarnFinder::calcMatrixLengthsAboveCells()
+{
+    for(int i = 0; i < m_M; i++)
+        findMaxSquareAboveCell(i);
+}
+
+void BarnFinder::printMatrixLengthsAboveCells()
+{
+    for(int i = 0; i < m_M; i++)
+    {
+        for(int j = 0; j < m_N - 1; j++)
+            std::cout << m_matrixLengthsAboveCells[i][j] << " ";
+        std::cout << m_matrixLengthsAboveCells[i][m_N - 1] << std::endl;
+    }
+}
+
+void BarnFinder::getMatrixLengthsAboveCells(int field[][30])
+{
+    for(int i = 0; i < m_M; i++)
+        for(int j = 0; j < m_N; j++)
+            field[i][j] = m_matrixLengthsAboveCells[i][j];
+}
+
+void BarnFinder::findMaxSquareAboveCell(int i)
+{    
+    for(int j = 0; j < m_N; j++)
+    {
+        if(m_treeCoords.count(std::pair<int, int>(j, i)))
+            m_matrixLengthsAboveCells[i][j] = 0;
+        else
+            m_matrixLengthsAboveCells[i][j]++;
+    }
+    for(int k = 0; k < m_N; k++)
+        m_matrixLengthsAboveCells[i + 1][k] = m_matrixLengthsAboveCells[i][k];    
+}
 }

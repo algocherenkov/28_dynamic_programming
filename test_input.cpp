@@ -7,10 +7,10 @@ int main()
     int M = 0;
     std::cin >> N;
     std::cin >> M;
-    tasks::SmallBarn barnFinder(N, M);
-    barnFinder.readField();
+    tasks::BarnFinder barnFinder(N, M);
+    barnFinder.readTreeCoords();
+    barnFinder.calcMatrixLengthsAboveCells();
 
-    std::cout << barnFinder.calc() << std::endl;
-
+    barnFinder.printMatrixLengthsAboveCells();
     getchar();
 }
