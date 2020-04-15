@@ -254,6 +254,7 @@ void BarnFinder::fillBuff(int line[])
 void BarnFinder::calcLRBuffs()
 {
     std::stack<int> store;
+    std::unordered_set<int> usedIndexes;
 
     for(int i = m_N - 1; i >= 0; i--)
     {
@@ -266,12 +267,13 @@ void BarnFinder::calcLRBuffs()
             store.push(i);
             int border = store.top();
             if(i > 0)
-                for(int k = i; m_buffLine[k] > m_buffLine[i - 1]; k++)
+                for(int k = i; k < m_N && (m_buffLine[k] > m_buffLine[i - 1]); k++)
                 {
-                    if(m_buffL[k])
+                    if(usedIndexes.count(k))
                         continue;
                     m_buffL[k] = border;
                     store.pop();
+                    usedIndexes.emplace(k);
                 }
             else if(!store.empty())
             {
@@ -283,7 +285,7 @@ void BarnFinder::calcLRBuffs()
             }
         }
     }
-
+    usedIndexes.clear();
     for(int i = 0; i < m_N; i++)
     {
         if(!m_buffLine[i])
@@ -295,12 +297,13 @@ void BarnFinder::calcLRBuffs()
             store.push(i);
             int border = store.top();
             if(i < (m_N - 1))
-                for(int k = i; m_buffLine[k] > m_buffLine[i + 1]; k--)
+                for(int k = i; k >= 0 && (m_buffLine[k] > m_buffLine[i + 1]); k--)
                 {
-                    if(m_buffR[k])
+                    if (usedIndexes.count(k))
                         continue;
                     m_buffR[k] = border;
                     store.pop();
+                    usedIndexes.emplace(k);
                 }
             else if(!store.empty())
             {
@@ -312,6 +315,7 @@ void BarnFinder::calcLRBuffs()
             }
         }
     }
+    store.empty();
 }
 
 void BarnFinder::printLRBuffs()
@@ -333,7 +337,7 @@ void BarnFinder::findMaxSquareAboveCell(int i)
 {    
     for(int j = 0; j < m_N; j++)
     {
-        if(m_treeCoords.count(std::pair<int, int>(j, i)))
+        if(m_treeCoords.count(std::pair<int, int>(j, i))) 
             m_matrixLengthsAboveCells[i][j] = 0;
         else
             m_matrixLengthsAboveCells[i][j]++;

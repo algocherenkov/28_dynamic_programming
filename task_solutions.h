@@ -52,9 +52,10 @@ namespace tasks {
 
     int islandsInMatrix(int ocean[][100], int n);
 
-
+    constexpr int MAX_SIZE = 30;
     class BarnFinder
     {
+        
     public:
         BarnFinder(int N, int M):
             m_M(M),
@@ -82,6 +83,10 @@ namespace tasks {
         void printLRBuffs();
         int* getLBuff() { return m_buffL; }
         int* getRBuff() { return m_buffR; }
+        void clearBuffs() { 
+            memset(m_buffL, 0, m_N * sizeof(int)); 
+            memset(m_buffR, 0, m_N * sizeof(int));
+        }
 
     private:
         int findLeftLength(int i, int j);
@@ -91,14 +96,14 @@ namespace tasks {
         int m_M{0};
         int m_N{0};
 
-        int m_field[1000][1000];
+        int m_field[MAX_SIZE][MAX_SIZE];
         int m_maxSquare{0};
 
         std::unordered_set<std::pair<int, int>, pair_hash> m_treeCoords;
-        int m_matrixLengthsAboveCells[1000][1000]{{0}};
+        int m_matrixLengthsAboveCells[MAX_SIZE][MAX_SIZE]{{0}};
 
-        int m_buffLine[1000]{0};
-        int m_buffL[1000]{0};
-        int m_buffR[1000]{0};
+        int m_buffLine[MAX_SIZE]{0};
+        int m_buffL[MAX_SIZE]{0};
+        int m_buffR[MAX_SIZE]{0};
     };    
 }
