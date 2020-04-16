@@ -7,6 +7,7 @@
 #include <map>
 #include <cstdio>
 
+#define BARN_TEST
 #define BOOST_TEST_MODULE test_main
 
 #include <boost/test/included/unit_test.hpp>
@@ -122,7 +123,7 @@ BOOST_AUTO_TEST_CASE(barn_finder_part_one_tests)
 
     tasks::BarnFinder barnFinder(N, M);
     barnFinder.fillTreeCoords(coords, T);
-    barnFinder.calcMatrixLengthsAboveCells();
+    barnFinder.calcRowWithLengthsAboveCells();
     barnFinder.printMatrixLengthsAboveCells();
 
     barnFinder.getMatrixLengthsAboveCells(answer);
@@ -141,8 +142,7 @@ BOOST_AUTO_TEST_CASE(barn_finder_part_two_tests)
     int answerR[10] = {9, 9, 9, 4, 4, 9, 7, 7, 9, 9};
 
     tasks::BarnFinder barnFinder(N, M);
-    barnFinder.fillBuff(buff);
-    barnFinder.calcLRBuffs();
+    barnFinder.calcLRBuffs(buff);
     barnFinder.printLRBuffs();
 
     auto lBuffer = barnFinder.getLBuff();
@@ -159,8 +159,7 @@ BOOST_AUTO_TEST_CASE(barn_finder_part_two_tests)
     int buff2[10] = {6, 5, 4, 3, 2, 1, 0, 1, 2, 3};
     int answerL2[10] = { 0, 0, 0, 0, 0, 0, 0, 7, 8, 9 };
     int answerR2[10] = { 0, 1, 2, 3, 4, 5, 9, 9, 9, 9 };
-    barnFinder.fillBuff(buff2);
-    barnFinder.calcLRBuffs();
+    barnFinder.calcLRBuffs(buff2);
     barnFinder.printLRBuffs();
 
     auto lBuffer2 = barnFinder.getLBuff();
@@ -171,5 +170,22 @@ BOOST_AUTO_TEST_CASE(barn_finder_part_two_tests)
         BOOST_CHECK_MESSAGE(lBuffer2[i] == answerL2[i], "wrong value in lBuffer. Index is " << i << ". Real value is " << answerL2[i]);
         BOOST_CHECK_MESSAGE(rBuffer2[i] == answerR2[i], "wrong value in lBuffer. Index is " << i << ". Real value is " << answerL2[i]);
     }
+}
+
+BOOST_AUTO_TEST_CASE(barn_finder_final_tests)
+{
+    int N = 4;
+    int M = 3;
+    int T = 2;
+    int coords[2][30] = {
+        {1, 1},
+        {0, 2}
+    };
+
+    tasks::BarnFinder barnFinder(N, M);
+    barnFinder.fillTreeCoords(coords, T);
+    auto result = barnFinder.calcMaxSquare();
+    
+    BOOST_CHECK_MESSAGE(result == 6, "wrong value of barn square. Real value is " << result);
 }
 BOOST_AUTO_TEST_SUITE_END()

@@ -137,7 +137,7 @@ int islandsInMatrix(int ocean[][100], int n)
     return islands;
 }
 
-/*******************************************SMALLBARN*********************************************/
+/*******************************************BARN*********************************************/
 int BarnFinder::findLeftLength(int i, int j)
 {
     int counter = 0;
@@ -180,7 +180,7 @@ void BarnFinder::readField()
             std::cin >> m_field[i][j];
 }
 
-void BarnFinder::fillField(int field[][30])
+void BarnFinder::fillField(int field[30][30])
 {
     for(int i = 0; i < m_M; i++)
         for(int j = 0; j < m_N; j++)
@@ -216,7 +216,21 @@ void BarnFinder::fillTreeCoords(int coords[2][30], int t)
         m_treeCoords.emplace(coords[i][0], coords[i][1]);
 }
 
-void BarnFinder::calcMatrixLengthsAboveCells()
+void BarnFinder::findMaxSquareAboveCell(int i)
+{    
+    for(int j = 0; j < m_N; j++)
+    {
+        if(m_treeCoords.count(std::pair<int, int>(j, i))) 
+            m_rowWithLengthsAboveCells[j] = 0;
+        else
+            m_rowWithLengthsAboveCells[j]++;        
+    }
+    
+    for (int k = 0; k < m_N; k++)
+        m_matrixWithLengthsAboveCells[i][k] = m_rowWithLengthsAboveCells[k];
+}
+
+void BarnFinder::calcRowWithLengthsAboveCells()
 {
     for(int i = 0; i < m_M; i++)
         findMaxSquareAboveCell(i);
@@ -227,32 +241,30 @@ void BarnFinder::printMatrixLengthsAboveCells()
     for(int i = 0; i < m_M; i++)
     {
         for(int j = 0; j < m_N - 1; j++)
-            std::cout << m_matrixLengthsAboveCells[i][j] << " ";
-        std::cout << m_matrixLengthsAboveCells[i][m_N - 1] << std::endl;
+            std::cout << m_matrixWithLengthsAboveCells[i][j] << " ";
+        std::cout << m_matrixWithLengthsAboveCells[i][m_N - 1] << std::endl;
     }
 }
 
-void BarnFinder::getMatrixLengthsAboveCells(int field[][30])
+void BarnFinder::getMatrixLengthsAboveCells(int field[30][30])
 {
     for(int i = 0; i < m_M; i++)
         for(int j = 0; j < m_N; j++)
-            field[i][j] = m_matrixLengthsAboveCells[i][j];
+            field[i][j] = m_matrixWithLengthsAboveCells[i][j];
 }
 
 void BarnFinder::readBuff()
 {
     for(int i = 0; i < m_N; i++)
         std::cin >> m_buffLine[i];
+    m_buffWasConsoleRead = true;
 }
 
-void BarnFinder::fillBuff(int line[])
+void BarnFinder::calcLRBuffs(int * row)
 {
-    for(int i = 0; i < m_N; i++)
-        m_buffLine[i] = line[i];
-}
+    if (m_buffWasConsoleRead)
+        row = m_buffLine;
 
-void BarnFinder::calcLRBuffs()
-{
     std::stack<int> store;
     std::unordered_set<int> usedIndexes;
 
@@ -261,7 +273,7 @@ void BarnFinder::calcLRBuffs()
         store.push(i);
         int border = store.top();
         if(i > 0)
-            for(int k = i; (k < m_N) && (m_buffLine[k] > m_buffLine[i - 1]); k++)
+            for(int k = i; (k < m_N) && (row[k] > row[i - 1]); k++)
             {
                 if(usedIndexes.count(k))
                     continue;
@@ -282,7 +294,7 @@ void BarnFinder::calcLRBuffs()
         store.push(i);
         int border = store.top();
         if(i < (m_N - 1))
-            for(int k = i; (k >= 0) && (m_buffLine[k] > m_buffLine[i + 1]); k--)
+            for(int k = i; (k >= 0) && (row[k] > row[i + 1]); k--)
             {
                 if (usedIndexes.count(k))
                     continue;
@@ -316,16 +328,30 @@ void BarnFinder::printLRBuffs()
     std::cout << m_buffR[m_N - 1] << std::endl;
 }
 
-void BarnFinder::findMaxSquareAboveCell(int i)
-{    
-    for(int j = 0; j < m_N; j++)
+int BarnFinder::calcMaxSquare()
+{
+    int totalMaxSquare = -1;
+    for (int i = 0; i < m_M; i++)
     {
-        if(m_treeCoords.count(std::pair<int, int>(j, i))) 
-            m_matrixLengthsAboveCells[i][j] = 0;
-        else
-            m_matrixLengthsAboveCells[i][j]++;
+        findMaxSquareAboveCell(i);
+        calcLRBuffs(m_rowWithLengthsAboveCells);
+        auto result = findMaxSquareOnLine();
+        if (result > totalMaxSquare)
+            totalMaxSquare = result;
     }
-    for(int k = 0; k < m_N; k++)
-        m_matrixLengthsAboveCells[i + 1][k] = m_matrixLengthsAboveCells[i][k];    
+    return totalMaxSquare;
 }
+
+int BarnFinder::findMaxSquareOnLine()
+{
+    int maxSquare = -1;
+    for (int j = 0; j < m_N; j++)
+    {
+        int result = (m_buffR[j] - m_buffL[j] + 1) * m_rowWithLengthsAboveCells[j];
+        if (result > maxSquare)
+            maxSquare = result;
+    }
+    return maxSquare;
+}
+
 }

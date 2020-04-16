@@ -9,7 +9,7 @@ int main()
 
     tasks::BarnFinder barnFinder(N, M);
     barnFinder.readBuff();
-    barnFinder.calcLRBuffs();
+    barnFinder.calcLRBuffs(nullptr);
 
     barnFinder.printLRBuffs();
     getchar();

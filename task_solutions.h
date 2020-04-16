@@ -65,33 +65,37 @@ namespace tasks {
         BarnFinder() = default;
 
         //for small barns
-        void readField();
-        void fillField(int field[30][30]);
+        void readField();        
         int calcWithBruteForce();
+        //for test purposes
+        void fillField(int field[30][30]);
 
         //for 1st part of barn task
         void readTreeCoords();
-        void fillTreeCoords(int [2][30], int t);
-        void calcMatrixLengthsAboveCells();
+        void calcRowWithLengthsAboveCells(); //Matrix will be calc too
         void printMatrixLengthsAboveCells();
+        //for test purposes
+        void fillTreeCoords(int[2][30], int t);
         void getMatrixLengthsAboveCells(int field[30][30]);
 
-        //2nd part of bran task
+        //2nd part of barn task
         void readBuff();
-        void fillBuff(int line[30]);
-        void calcLRBuffs();
+        void calcLRBuffs(int* row);
         void printLRBuffs();
+        
+        //for test purposes
         int* getLBuff() { return m_buffL; }
         int* getRBuff() { return m_buffR; }
-        void clearBuffs() { 
-            memset(m_buffL, 0, m_N * sizeof(int)); 
-            memset(m_buffR, 0, m_N * sizeof(int));
-        }
+        void clearBuffs() { memset(m_buffL, 0, m_N * sizeof(int)); memset(m_buffR, 0, m_N * sizeof(int)); }
+
+        //3rd part of barn task
+        int calcMaxSquare();
 
     private:
         int findLeftLength(int i, int j);
         void findMaxSquare(int i, int j);
         void findMaxSquareAboveCell(int i);
+        int findMaxSquareOnLine();
     private:
         int m_M{0};
         int m_N{0};
@@ -100,7 +104,11 @@ namespace tasks {
         int m_maxSquare{0};
 
         std::unordered_set<std::pair<int, int>, pair_hash> m_treeCoords;
-        int m_matrixLengthsAboveCells[MAX_SIZE][MAX_SIZE]{{0}};
+        int m_rowWithLengthsAboveCells[MAX_SIZE]{0};
+
+        //for test purposes
+        int m_matrixWithLengthsAboveCells[MAX_SIZE][MAX_SIZE]{{0}};
+        bool m_buffWasConsoleRead{ false };
 
         int m_buffLine[MAX_SIZE]{0};
         int m_buffL[MAX_SIZE]{0};
