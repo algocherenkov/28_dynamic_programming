@@ -257,65 +257,48 @@ void BarnFinder::calcLRBuffs()
     std::unordered_set<int> usedIndexes;
 
     for(int i = m_N - 1; i >= 0; i--)
-    {
-        if(!m_buffLine[i])
-            m_buffL[i] = i;
-        else if(i > 0 && m_buffLine[i] <= m_buffLine[i - 1])
-            store.push(i);
-        else
-        {
-            store.push(i);
-            int border = store.top();
-            if(i > 0)
-                for(int k = i; k < m_N && (m_buffLine[k] > m_buffLine[i - 1]); k++)
-                {
-                    if(usedIndexes.count(k))
-                        continue;
-                    m_buffL[k] = border;
-                    store.pop();
-                    usedIndexes.emplace(k);
-                }
-            else if(!store.empty())
+    {        
+        store.push(i);
+        int border = store.top();
+        if(i > 0)
+            for(int k = i; (k < m_N) && (m_buffLine[k] > m_buffLine[i - 1]); k++)
             {
-                while(!store.empty())
-                {
-                    m_buffL[store.top()] = border;
-                    store.pop();
-                }
+                if(usedIndexes.count(k))
+                    continue;
+                m_buffL[k] = border;
+                store.pop();
+                usedIndexes.emplace(k);
             }
-        }
+        else 
+            while(!store.empty())
+            {
+                m_buffL[store.top()] = border;
+                store.pop();
+            }
     }
     usedIndexes.clear();
     for(int i = 0; i < m_N; i++)
-    {
-        if(!m_buffLine[i])
-            m_buffR[i] = i;
-        else if(i < (m_N - 1) && m_buffLine[i] <= m_buffLine[i + 1])
-            store.push(i);
-        else
-        {
-            store.push(i);
-            int border = store.top();
-            if(i < (m_N - 1))
-                for(int k = i; k >= 0 && (m_buffLine[k] > m_buffLine[i + 1]); k--)
-                {
-                    if (usedIndexes.count(k))
-                        continue;
-                    m_buffR[k] = border;
-                    store.pop();
-                    usedIndexes.emplace(k);
-                }
-            else if(!store.empty())
+    {        
+        store.push(i);
+        int border = store.top();
+        if(i < (m_N - 1))
+            for(int k = i; (k >= 0) && (m_buffLine[k] > m_buffLine[i + 1]); k--)
             {
-                while(!store.empty())
-                {
-                    m_buffR[store.top()] = border;
-                    store.pop();
-                }
+                if (usedIndexes.count(k))
+                    continue;
+                m_buffR[k] = border;
+                store.pop();
+                usedIndexes.emplace(k);
             }
-        }
-    }
-    store.empty();
+        else if(!store.empty())
+        {
+            while(!store.empty())
+            {
+                m_buffR[store.top()] = border;
+                store.pop();
+            }
+        }        
+    }   
 }
 
 void BarnFinder::printLRBuffs()
